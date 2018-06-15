@@ -1,6 +1,11 @@
 package io.github.martinschneider.aws;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.devicefarm.AWSDeviceFarm;
+import com.amazonaws.services.devicefarm.AWSDeviceFarmClient;
 import com.amazonaws.services.devicefarm.AWSDeviceFarmClientBuilder;
 import com.amazonaws.services.devicefarm.model.AWSDeviceFarmException;
 import com.amazonaws.services.devicefarm.model.BillingMethod;
@@ -37,6 +42,15 @@ import org.slf4j.LoggerFactory;
 public class TestRunMojo extends AbstractMojo {
 
   private static final Logger LOG = LoggerFactory.getLogger(TestRunMojo.class);
+
+  @Parameter(required = true)
+  private String awsAccessKey;
+
+  @Parameter(required = true)
+  private String awsSecretKey;
+
+  @Parameter(defaultValue = "us-east-1")
+  private String awsRegion;
 
   @Parameter(required = true)
   private String projectArn;
@@ -92,16 +106,21 @@ public class TestRunMojo extends AbstractMojo {
 
   @Parameter(required = false)
   private boolean skipAppResign;
-  
+
   @Parameter(required = false, defaultValue = "1.7.2")
   private String appiumVersion;
 
-  private AWSDeviceFarm aws = AWSDeviceFarmClientBuilder.defaultClient();
+  private AWSDeviceFarm aws;
 
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
-      LOG.info("Triggering AWS test run");
+      LOG.info("Building AWS Device Farm client");
+      LOG.debug("awsAccessKey={}", awsAccessKey);
+      LOG.debug("awsSecretKey={}", awsSecretKey);
+      LOG.debug("awsRegion={}", awsRegion);
+      aws = buildClient();
 
+      LOG.info("Triggering AWS Device Farm test run");
       // log configuration
       LOG.debug("projectArn={}", projectArn);
       LOG.debug("devicePoolArn={}", devicePoolArn);
@@ -124,11 +143,7 @@ public class TestRunMojo extends AbstractMojo {
       // upload test package
       LOG.info("Uploading test package from {}", testPackage);
       String testPackageArn =
-          upload(
-                  new File(testPackage),
-                  projectArn,
-                  UploadType.APPIUM_JAVA_JUNIT_TEST_PACKAGE,
-                  true)
+          upload(new File(testPackage), projectArn, UploadType.APPIUM_JAVA_JUNIT_TEST_PACKAGE, true)
               .getArn();
 
       // upload app
@@ -195,11 +210,21 @@ public class TestRunMojo extends AbstractMojo {
 
       ScheduleRunResult runResult = aws.scheduleRun(runRequest);
       String runArn = runResult.getRun().getArn();
-      
+
       LOG.info("Triggered test with arn {}", runArn);
     } catch (AWSDeviceFarmException | InterruptedException | IOException exception) {
       LOG.error("Error while triggering AWS test", exception);
     }
+  }
+
+  private AWSDeviceFarm buildClient() {
+    AWSDeviceFarmClientBuilder awsDeviceFarmBuilder = AWSDeviceFarmClient.builder();
+    AWSCredentials awsCredentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
+    AWSCredentialsProvider awsCredentialsProvider =
+        new AWSStaticCredentialsProvider(awsCredentials);
+    awsDeviceFarmBuilder.setCredentials(awsCredentialsProvider);
+    awsDeviceFarmBuilder.setRegion(awsRegion);
+    return awsDeviceFarmBuilder.build();
   }
 
   /** modified from https://github.com/awslabs/aws-device-farm-jenkins-plugin */
