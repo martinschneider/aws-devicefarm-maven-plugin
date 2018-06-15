@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.martinschneider</groupId>
   <artifactId>aws-devicefarm-maven-plugin</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
   <name>aws-devicefarm-maven-plugin</name>
   <description>Maven plugin to run tests on AWS Device Farm</description>
   <packaging>maven-plugin</packaging>

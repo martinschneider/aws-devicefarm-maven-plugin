@@ -96,7 +96,7 @@ public class TestRunMojo extends AbstractMojo {
   @Parameter(required = false, defaultValue = "1.7.2")
   private String appiumVersion;
 
-  private AWSDeviceFarm aws = AWSDeviceFarmClientBuilder.standard().build();
+  private AWSDeviceFarm aws = AWSDeviceFarmClientBuilder.defaultClient();
 
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
