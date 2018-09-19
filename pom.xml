@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.martinschneider</groupId>
   <artifactId>aws-devicefarm-maven-plugin</artifactId>
-  <version>1.2</version>
+  <version>1.3</version>
   <name>aws-devicefarm-maven-plugin</name>
   <description>Maven plugin to run tests on AWS Device Farm</description>
   <packaging>maven-plugin</packaging>
@@ -46,7 +46,7 @@
   </distributionManagement>
   <properties>
     <slf4j.version>1.7.25</slf4j.version>
-    <aws.sdk.version>1.11.344</aws.sdk.version>
+    <aws.sdk.version>1.11.410</aws.sdk.version>
     <maven.plugin.api.version>3.5.3</maven.plugin.api.version>
     <maven.plugin.plugin.version>3.5.1</maven.plugin.plugin.version>
     <maven.plugin.annotations.version>3.5.1</maven.plugin.annotations.version>
