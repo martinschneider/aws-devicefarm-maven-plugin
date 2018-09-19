@@ -24,7 +24,7 @@ You can find a sample configuration below. In real-life applications you might w
 
 ```
 <properties>
-  <aws.devicefarm.maven.plugin.version>1.2</aws.devicefarm.maven.plugin.version>
+  <aws.devicefarm.maven.plugin.version>1.3</aws.devicefarm.maven.plugin.version>
 </properties>
 
 <build>
@@ -85,6 +85,8 @@ You can find a sample configuration below. In real-life applications you might w
             <additionalRunParameters>
               <appium_version>1.7.2</appium_version>
             </additionalRunParameters>
+            <!-- see https://docs.aws.amazon.com/devicefarm/latest/developerguide/custom-test-environments.html -->
+            <testSpecArn>${testSpecArn}</testSpecArn>
             <!-- these will be set by the previous goals -->
             <appArn>${appArn}</appArn>
             <testArn>${testArn}</testArn>
@@ -101,5 +103,3 @@ Execute with `mvn verify`
 
 ## Contact
 Martin Schneider, mart.schneider@gmail.com
-
-[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-1.svg)](https://www.buymeacoffee.com/mschneider)
