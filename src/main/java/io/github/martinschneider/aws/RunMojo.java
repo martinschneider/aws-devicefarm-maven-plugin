@@ -45,6 +45,9 @@ public class RunMojo extends AbstractMojo {
   
   @Parameter(defaultValue = "APPIUM_JAVA_JUNIT")
   private String testType;
+  
+  @Parameter(required = false)
+  private String testSpecArn;
 
   // default location = Singapore
   @Parameter(defaultValue = "1.3521")
@@ -129,6 +132,11 @@ public class RunMojo extends AbstractMojo {
     ScheduleRunTest test = new ScheduleRunTest();
     test.setTestPackageArn(testArn);
     test.setType(TestType.fromValue(testType));
+    
+    if (testSpecArn != null && !testSpecArn.isEmpty())
+    {
+      test.setTestSpecArn(testSpecArn);
+    }
 
     // attach additional parameters (e.g. appium_version) to test run
     for (Map.Entry<String, String> entry : additionalRunParameters.entrySet())
